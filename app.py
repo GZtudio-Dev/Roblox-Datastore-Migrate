@@ -61,8 +61,10 @@ def run_migration(config, log_queue):
     api_key      = config["api_key"]
     old_uid      = config["old_universe_id"]
     new_uid      = config["new_universe_id"]
-    ds_name      = config["datastore_name"]
-    prefix       = config.get("key_prefix", "")
+    src_ds_name  = config["source_datastore_name"]
+    tgt_ds_name  = config.get("target_datastore_name") or src_ds_name
+    # prefix       = config.get("key_prefix", "")  # coming soon: filter by key list
+    prefix       = ""
     dry_run      = config.get("dry_run", False)
     ds_type      = config.get("datastore_type", "standard")
 
@@ -70,7 +72,7 @@ def run_migration(config, log_queue):
         log_queue.put({"msg": msg, "level": level})
 
     log(f"🚀 Starting {'DRY RUN' if dry_run else 'MIGRATION'} — {ds_type.upper()} datastore")
-    log(f"📦 Datastore: {ds_name}")
+    log(f"📦 Source DS: {src_ds_name}  →  Target DS: {tgt_ds_name}")
     log(f"🔁 {old_uid}  →  {new_uid}")
     if prefix:
         log(f"🔍 Prefix filter: {prefix}")
@@ -82,24 +84,30 @@ def run_migration(config, log_queue):
     try:
         while True:
             if ds_type == "standard":
-                data   = list_keys(api_key, old_uid, ds_name, prefix, cursor)
+                data   = list_keys(api_key, old_uid, src_ds_name, prefix, cursor)
                 keys   = [e["key"] for e in data.get("keys", [])]
                 cursor = data.get("nextPageCursor")
             else:
-                data   = list_ordered_keys(api_key, old_uid, ds_name, prefix, cursor)
+                data   = list_ordered_keys(api_key, old_uid, src_ds_name, prefix, cursor)
                 keys   = [e["id"] for e in data.get("entries", [])]
                 cursor = data.get("nextPageToken")
 
             for key in keys:
                 try:
                     if ds_type == "standard":
-                        value = get_entry(api_key, old_uid, ds_name, key)
+                        value = get_entry(api_key, old_uid, src_ds_name, key)
+                        if not value:
+                            log(f"⏭ SKIP (empty): {key}", "info")
+                            continue
                         if not dry_run:
-                            set_entry(api_key, new_uid, ds_name, key, value)
+                            set_entry(api_key, new_uid, tgt_ds_name, key, value)
                     else:
-                        entry = get_entry(api_key, old_uid, ds_name, key)
+                        entry = get_entry(api_key, old_uid, src_ds_name, key)
+                        if not entry:
+                            log(f"⏭ SKIP (empty): {key}", "info")
+                            continue
                         if not dry_run:
-                            set_ordered_entry(api_key, new_uid, ds_name, key, entry)
+                            set_ordered_entry(api_key, new_uid, tgt_ds_name, key, entry)
                     success += 1
                     log(f"✅ {'[DRY]' if dry_run else ''} {key}", "success")
                     time.sleep(0.1)
