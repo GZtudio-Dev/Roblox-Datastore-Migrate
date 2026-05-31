@@ -126,6 +126,12 @@ def run_migration(config, log_queue):
 def index():
     return render_template("index.html")
 
+@app.route("/shutdown", methods=["POST"])
+def shutdown():
+    import os
+    os.kill(os.getpid(), 9)
+    return {"status": "shutting down"}
+
 @app.route("/migrate", methods=["POST"])
 def migrate():
     config = request.get_json()

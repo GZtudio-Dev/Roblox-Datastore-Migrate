@@ -471,6 +471,11 @@ function finish() {
   btn.disabled = false;
   btn.textContent = 'RUN AGAIN';
 }
+
+// Auto shutdown server kalau browser ditutup
+window.addEventListener('beforeunload', () => {
+  navigator.sendBeacon('/shutdown', JSON.stringify({shutdown: true}));
+});
 </script>
 </body>
 </html>
