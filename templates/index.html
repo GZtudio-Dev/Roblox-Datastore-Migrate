@@ -9,20 +9,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:       #080810;
-    --surface:  #0f0f1a;
-    --surface2: #16161e;
-    --surface3: #1e1e28;
-    --border:   rgba(139,92,246,0.18);
-    --border2:  rgba(139,92,246,0.08);
+    --bg:       #000000;
+    --surface:  #0a0a0a;
+    --surface2: #111111;
+    --surface3: #1a1a1a;
+    --border:   rgba(139,92,246,0.25);
+    --border2:  rgba(139,92,246,0.12);
     --accent:   #8b5cf6;
     --accent-h: #9585ff;
-    --green:    #6af7c8;
-    --red:      #f76a8f;
-    --yellow:   #f7c96a;
-    --text:     #eeeef5;
-    --muted:    #5a5a72;
-    --dim:      #8888a8;
+    --green:    #4ade80;
+    --red:      #f87171;
+    --yellow:   #fbbf24;
+    --text:     #ffffff;
+    --muted:    #ffffff;
+    --dim:      #ffffff;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,44 +35,23 @@
     overflow-x: hidden;
   }
 
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: radial-gradient(rgba(139,92,246,0.08) 1px, transparent 1px);
-    background-size: 32px 32px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  body::after {
-    content: '';
-    position: fixed;
-    top: 40%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 700px; height: 700px;
-    background: radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
   /* NAVBAR */
   .gz-nav {
     position: relative; z-index: 100;
-    background: rgba(8,8,16,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 0.5px solid var(--border);
+    background: #000000;
+    border-bottom: 1px solid rgba(139,92,246,0.2);
     padding: 0 4rem; height: 60px;
     display: flex; align-items: center; justify-content: space-between;
   }
   .gz-logo { display: flex; flex-direction: column; gap: 2px; text-decoration: none; }
   .gz-logo-name { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 0.06em; line-height: 1; text-transform: uppercase; }
   .gz-logo-name span { color: var(--accent); }
-  .gz-logo-sub { font-size: 9px; color: rgba(255,255,255,0.28); letter-spacing: 0.14em; font-family: 'Space Mono', monospace; text-transform: uppercase; }
+  .gz-logo-sub { font-size: 9px; color: #ffffff; letter-spacing: 0.14em; font-family: 'Space Mono', monospace; text-transform: uppercase; opacity: 0.4; }
   .gz-nav-badge {
     font-family: 'Space Mono', monospace;
     font-size: 10px; letter-spacing: 0.1em;
     color: var(--accent);
-    border: 0.5px solid rgba(139,92,246,0.4);
+    border: 1px solid rgba(139,92,246,0.4);
     border-radius: 999px;
     padding: 4px 12px;
     text-transform: uppercase;
@@ -117,7 +96,7 @@
   header p {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 15px; font-weight: 500;
-    color: rgba(255,255,255,0.25);
+    color: #ffffff;
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
@@ -154,28 +133,69 @@
   label {
     font-family: 'Space Mono', monospace;
     font-size: 10px; font-weight: 700;
-    color: var(--muted);
+    color: #ffffff;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
-  input, select {
+  input {
     background: var(--surface2);
-    border: 0.5px solid rgba(139,92,246,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 8px;
     padding: 11px 14px;
-    color: var(--text);
+    color: #ffffff;
     font-family: 'Space Mono', monospace;
     font-size: 12px;
     outline: none;
     transition: border-color .2s, box-shadow .2s;
     width: 100%;
   }
-  input:focus, select:focus {
+  input:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(139,92,246,0.1);
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
   }
-  input::placeholder { color: var(--muted); }
-  select option { background: var(--surface2); }
+  input::placeholder { color: rgba(255,255,255,0.25); }
+
+  /* CUSTOM SELECT */
+  .custom-select { position: relative; }
+  .custom-select-trigger {
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 11px 14px;
+    color: #ffffff;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: border-color .2s;
+    user-select: none;
+  }
+  .custom-select-trigger:hover { border-color: rgba(139,92,246,0.4); }
+  .custom-select-trigger.open { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139,92,246,0.15); }
+  .custom-select-arrow { transition: transform .2s; color: rgba(255,255,255,0.4); font-size: 10px; }
+  .custom-select-trigger.open .custom-select-arrow { transform: rotate(180deg); }
+  .custom-select-dropdown {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+    background: #1a1a1a;
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 100;
+    display: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .custom-select-dropdown.open { display: block; }
+  .custom-select-option {
+    padding: 12px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .custom-select-option:hover { background: rgba(139,92,246,0.15); color: #ffffff; }
+  .custom-select-option.selected { color: var(--accent); }
+  select { display: none; }
 
   /* TOGGLE */
   .toggle-row {
@@ -186,7 +206,7 @@
     padding: 14px 16px;
   }
   .toggle-label { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: 0.04em; }
-  .toggle-label small { display: block; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 3px; letter-spacing: 0.04em; }
+  .toggle-label small { display: block; font-family: 'Space Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 3px; letter-spacing: 0.04em; }
   .switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
   .switch input { opacity: 0; width: 0; height: 0; }
   .slider { position: absolute; inset: 0; background: var(--surface3); border-radius: 99px; cursor: pointer; transition: background .2s; border: 0.5px solid var(--border); }
@@ -274,8 +294,8 @@
     display: flex; align-items: center; justify-content: space-between;
     margin-top: 40px;
   }
-  .gz-footer-copy { font-size: 11px; font-family: 'Space Mono', monospace; color: rgba(255,255,255,0.1); letter-spacing: 0.06em; }
-  .gz-footer a { font-size: 11px; font-family: 'Space Mono', monospace; color: var(--accent); text-decoration: none; letter-spacing: 0.06em; opacity: 0.6; transition: opacity .2s; }
+  .gz-footer-copy { font-size: 11px; font-family: 'Space Mono', monospace; color: rgba(255,255,255,0.3); letter-spacing: 0.06em; }
+  .gz-footer a { font-size: 11px; font-family: 'Space Mono', monospace; color: var(--accent); text-decoration: none; letter-spacing: 0.06em; opacity: 0.8; transition: opacity .2s; }
   .gz-footer a:hover { opacity: 1; }
 
   @keyframes fadeDown { from { opacity:0; transform:translateY(-16px); } to { opacity:1; transform:translateY(0); } }
@@ -345,6 +365,16 @@
     <div class="grid-1">
       <div class="field">
         <label>Datastore Type</label>
+        <div class="custom-select" id="dsTypeSelect">
+          <div class="custom-select-trigger" id="dsTypeTrigger">
+            <span id="dsTypeLabel">Standard Datastore</span>
+            <span class="custom-select-arrow">▼</span>
+          </div>
+          <div class="custom-select-dropdown" id="dsTypeDropdown">
+            <div class="custom-select-option selected" data-value="standard">Standard Datastore</div>
+            <div class="custom-select-option" data-value="ordered">Ordered Datastore</div>
+          </div>
+        </div>
         <select id="datastore_type">
           <option value="standard">Standard Datastore</option>
           <option value="ordered">Ordered Datastore</option>
@@ -471,6 +501,36 @@ function finish() {
   btn.disabled = false;
   btn.textContent = 'RUN AGAIN';
 }
+
+// Custom select dropdown
+const trigger = document.getElementById('dsTypeTrigger');
+const dropdown = document.getElementById('dsTypeDropdown');
+const label = document.getElementById('dsTypeLabel');
+const select = document.getElementById('datastore_type');
+const options = dropdown.querySelectorAll('.custom-select-option');
+
+trigger.addEventListener('click', () => {
+  trigger.classList.toggle('open');
+  dropdown.classList.toggle('open');
+});
+
+options.forEach(opt => {
+  opt.addEventListener('click', () => {
+    options.forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    label.textContent = opt.textContent;
+    select.value = opt.dataset.value;
+    trigger.classList.remove('open');
+    dropdown.classList.remove('open');
+  });
+});
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('dsTypeSelect').contains(e.target)) {
+    trigger.classList.remove('open');
+    dropdown.classList.remove('open');
+  }
+});
 
 // Auto shutdown server kalau browser ditutup
 window.addEventListener('beforeunload', () => {
