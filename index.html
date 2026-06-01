@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Datastore Migrator — GZtudio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:      #000000;
+      --surface: #0a0a0a;
+      --surface2:#111111;
+      --accent:  #8b5cf6;
+      --accent-h:#9585ff;
+      --green:   #4ade80;
+      --text:    #ffffff;
+      --border:  rgba(139,92,246,0.25);
+      --border2: rgba(139,92,246,0.12);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Barlow Condensed', sans-serif; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+
+    /* NAV */
+    nav { position: sticky; top: 0; z-index: 100; background: #000; border-bottom: 0.5px solid var(--border2); padding: 0 4rem; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; flex-direction: column; gap: 2px; text-decoration: none; }
+    .nav-logo-name { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 0.06em; line-height: 1; text-transform: uppercase; }
+    .nav-logo-name span { color: var(--accent); }
+    .nav-logo-sub { font-size: 9px; color: #ffffff; letter-spacing: 0.14em; font-family: 'Space Mono', monospace; text-transform: uppercase; }
+    .nav-badge { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--accent); border: 0.5px solid rgba(139,92,246,0.4); border-radius: 999px; padding: 4px 12px; text-transform: uppercase; }
+
+    /* MAIN 2-COL LAYOUT */
+    .main { padding: 4rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+    .main-left { display: flex; flex-direction: column; }
+    .main-right { background: var(--surface); border: 0.5px solid var(--border); border-radius: 14px; padding: 2rem; }
+
+    /* HERO LEFT */
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--accent); border: 0.5px solid rgba(139,92,246,0.4); border-radius: 999px; padding: 5px 14px; margin-bottom: 2rem; text-transform: uppercase; animation: fadeUp 0.5s ease both; width: fit-content; }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2s infinite; }
+    .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(64px, 8vw, 110px); line-height: 0.88; letter-spacing: 0.02em; margin-bottom: 1.5rem; animation: fadeUp 0.5s ease 0.1s both; }
+    .hero-title .accent { color: var(--accent); }
+    .hero-desc { font-family: 'Space Mono', monospace; font-size: 11px; line-height: 2; color: #ffffff; letter-spacing: 0.04em; margin-bottom: 2.5rem; animation: fadeUp 0.5s ease 0.15s both; }
+    .hero-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; animation: fadeUp 0.5s ease 0.2s both; }
+
+    /* BUTTONS */
+    .btn-primary { display: inline-flex; align-items: center; gap: 10px; background: var(--accent); color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.08em; padding: 14px 28px; border-radius: 10px; text-decoration: none; border: none; cursor: pointer; box-shadow: 0 0 32px rgba(139,92,246,0.35); transition: background .2s, box-shadow .2s, transform .1s; }
+    .btn-primary:hover { background: var(--accent-h); box-shadow: 0 0 48px rgba(139,92,246,0.55); }
+    .btn-primary:active { transform: scale(.97); }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 8px; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.08em; color: #ffffff; text-decoration: none; padding: 14px 28px; border: 0.5px solid rgba(255,255,255,0.3); border-radius: 10px; transition: border-color .2s; }
+    .btn-secondary:hover { border-color: #ffffff; }
+
+    /* HOW TO RIGHT */
+    .howto-title { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px; }
+    .howto-title::after { content: ''; flex: 1; height: 0.5px; background: var(--border2); }
+    .steps { display: flex; flex-direction: column; gap: 10px; }
+    .step { background: var(--surface2); border: 0.5px solid var(--border2); border-radius: 10px; padding: 1rem 1.2rem; display: flex; align-items: flex-start; gap: 1rem; }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #ffffff; line-height: 1; flex-shrink: 0; }
+    .step-text { font-family: 'Space Mono', monospace; font-size: 11px; color: #ffffff; letter-spacing: 0.04em; line-height: 1.9; padding-top: 4px; }
+    .step-text a { color: var(--accent); text-decoration: none; }
+    .step-text code { color: var(--accent); background: rgba(139,92,246,0.1); padding: 1px 5px; border-radius: 3px; }
+
+    /* DIVIDER */
+    .divider { height: 0.5px; background: linear-gradient(90deg, var(--border), transparent); margin: 0 4rem; }
+
+    /* FEATURES */
+    .features { padding: 4rem; }
+    .section-label { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; margin-bottom: 2rem; display: flex; align-items: center; gap: 12px; }
+    .section-label::after { content: ''; flex: 1; height: 0.5px; background: var(--border2); max-width: 200px; }
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border2); border: 0.5px solid var(--border2); border-radius: 14px; overflow: hidden; }
+    .feature-item { background: var(--bg); padding: 2rem; }
+    .feature-icon { width: 36px; height: 36px; border-radius: 9px; background: rgba(139,92,246,0.08); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; }
+    .feature-icon svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .feature-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.03em; color: #fff; margin-bottom: 8px; }
+    .feature-desc { font-family: 'Space Mono', monospace; font-size: 10px; color: #ffffff; letter-spacing: 0.04em; line-height: 1.9; }
+
+    /* FOOTER */
+    footer { border-top: 0.5px solid var(--border2); padding: 1.2rem 4rem; display: flex; align-items: center; justify-content: space-between; }
+    .footer-copy { font-family: 'Space Mono', monospace; font-size: 10px; color: #ffffff; letter-spacing: 0.06em; }
+    .footer-link { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--accent); text-decoration: none; letter-spacing: 0.06em; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+
+    @media (max-width: 768px) {
+      nav, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .main { padding: 2rem 1.5rem; grid-template-columns: 1fr; }
+      .features { padding: 2rem 1.5rem; }
+      .divider { margin: 0 1.5rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">
+    <span class="nav-logo-name">GZ<span>tudio</span></span>
+    <span class="nav-logo-sub">Solo Dev · Roblox</span>
+  </a>
+  <span class="nav-badge">Free & Open Source</span>
+</nav>
+
+<div class="main">
+  <!-- LEFT: Hero -->
+  <div class="main-left">
+    <div class="hero-badge"><span class="dot"></span> v1.1 · Stable</div>
+    <h1 class="hero-title">
+      DATASTORE<br>
+      <span class="accent">MIGRATOR</span>
+    </h1>
+    <p class="hero-desc">Migrate player data between Roblox universes via Open Cloud API — fast, safe & resumable. Runs locally on your PC, API key never leaves your machine.</p>
+    <div class="hero-actions">
+      <a href="https://github.com/GZtudio-Dev/Roblox-Datastore-Migrate/archive/refs/heads/main.zip" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        DOWNLOAD ZIP
+      </a>
+      <a href="https://github.com/GZtudio-Dev/Roblox-Datastore-Migrate" target="_blank" class="btn-secondary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        VIEW ON GITHUB
+      </a>
+    </div>
+  </div>
+
+  <!-- RIGHT: How to Install -->
+  <div class="main-right">
+    <div class="howto-title">How to Install</div>
+    <div class="steps">
+      <div class="step"><div class="step-num">#1</div><div class="step-text">Download the ZIP above and extract anywhere on your PC</div></div>
+      <div class="step"><div class="step-num">#2</div><div class="step-text">Install <a href="https://python.org" target="_blank">Python 3.8+</a> — check "Add Python to PATH" during install</div></div>
+      <div class="step"><div class="step-num">#3</div><div class="step-text">Double click <code>START.bat</code> — auto installs dependencies & opens browser</div></div>
+      <div class="step"><div class="step-num">#4</div><div class="step-text">Fill in your API Key, Universe IDs, and Datastore Name</div></div>
+      <div class="step"><div class="step-num">#5</div><div class="step-text">Hit <code>RUN MIGRATION</code> and watch the live log. Done!</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<section class="features">
+  <div class="section-label">Features</div>
+  <div class="features-grid">
+    <div class="feature-item">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+      <div class="feature-name">Run Locally</div>
+      <div class="feature-desc">Runs on your own PC via browser. API key stays on your machine — never sent to any server.</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div>
+      <div class="feature-name">Standard & Ordered</div>
+      <div class="feature-desc">Support both Standard Datastore (player data) and Ordered Datastore (leaderboard).</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="feature-name">Dry Run Mode</div>
+      <div class="feature-desc">Simulate migration without writing any data. Test before you commit.</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div class="feature-name">Real-time Log</div>
+      <div class="feature-desc">Live terminal log with success/failed counter and elapsed timer during migration.</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+      <div class="feature-name">Failed Key Log</div>
+      <div class="feature-desc">All failed keys are logged so you know exactly what needs to be retried.</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div class="feature-name">Auto Skip Empty</div>
+      <div class="feature-desc">Keys with empty or null data are automatically skipped — no wasted writes.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-copy">© 2026 GZtudio — solo dev, real builds.</span>
+  <a href="https://github.com/GZtudio-Dev/Roblox-Datastore-Migrate" target="_blank" class="footer-link">github · gztudio-dev</a>
+</footer>
+
+</body>
+</html>
