@@ -125,7 +125,7 @@ def run_migration(config, log_queue):
     log(f"✅ Success: {success}   ❌ Failed: {len(failed)}", "info")
     if failed:
         log(f"Failed keys: {', '.join(failed)}", "error")
-    log("🏁 Done!", "success")
+    log("🏁 Done!", "info")
     log("__DONE__", "__done__")
 
 # ── routes ────────────────────────────────────────────────────────────────────
